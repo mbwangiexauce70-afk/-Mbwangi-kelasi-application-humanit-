@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mbwangi Kelasi - Application Scolaire</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{margin:0;background:#F2F4F7;color:#1A2B4A}
+.hidden{display:none!important}
+.container{max-width:520px;margin:auto;padding:16px}
+.card{background:white;border-radius:14px;padding:18px;margin:12px 0;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid #E6EAF0}
+label{font-weight:600;font-size:14px}
+input,select,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid #D0D7E3;margin:8px 0 14px;font-size:15px;background:#F8FAFC}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;background:#0F3D6B;color:white;font-size:16px;font-weight:700;cursor:pointer}
+.badge{display:inline-block;background:#E8EFF9;color:#0F3D6B;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.matiere{background:white;border:1px solid #E6EAF0;border-radius:14px;padding:16px;cursor:pointer}
+.matiere b{font-size:16px}.matiere small{color:#64748B}
+.tp-item{border-left:4px solid #0F3D6B;padding:10px 12px;background:#F8FAFC;border-radius:8px;margin:10px 0}
+.cours-box{background:#F8FAFC;border:1px solid #E6EAF0;padding:14px;border-radius:10px;line-height:1.7;margin:10px 0}
+.topbar{background:#0F3D6B;color:white;padding:16px;display:flex;justify-content:space-between;align-items:center}
+.espace{border:1px dashed #94A3B8;background:#FFFBEB;padding:14px;border-radius:10px;text-align:center;color:#475569;margin:10px 0;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- 0. FOND D'ACCUEIL - AVANT D'ENTRER -->
+<div id="p-bienvenue" style="height:100vh;background: linear-gradient(rgba(15,61,107,0.65), rgba(15,61,107,0.65)), url('fond-eleves.jpg'); background-size:cover; background-position:center; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; color:white;">
+  <h1 style="font-size:52px;margin:0;line-height:1;font-weight:900;letter-spacing:1px;">MBWANGI<br>KELASI</h1>
+  <p style="font-size:16px;font-weight:600;margin-top:14px;">Application Scolaire - Cours, TP et Exercices</p>
+  <p style="font-size:13px;opacity:.9;">7ème A • 7ème B • 8ème A • 8ème B<br>Math, Français, SVT, Physique</p>
+  <button onclick="entrerApp()" style="margin-top:22px;background:white;color:#0F3D6B;border:none;padding:16px 28px;border-radius:30px;font-size:17px;font-weight:800;cursor:pointer;width:100%;max-width:340px;">Entrer dans l'application →</button>
+</div>
+
+<!-- 1. CONNEXION ÉLÈVE -->
+<div id="p-accueil" class="hidden">
+  <div style="background:#0F3D6B;color:white;padding:28px 20px;text-align:center"><h1 style="margin:0">MBWANGI KELASI</h1><p style="opacity:.85">Application Scolaire • Cours, TP et Exercices</p></div>
+  <div class="container"><div class="card">
+    <h2>Accéder à mon espace</h2>
+    <label>Nom de l'élève</label><input id="nom" placeholder="Ex : Exaucé Mbwangi">
+    <label>Classe</label>
+    <select id="classe"><option>7ème A</option><option>7ème B</option><option>8ème A</option><option>8ème B</option></select>
+    <button class="btn" onclick="commencer()">Accéder à mon espace →</button>
+    <p style="text-align:center;color:#64748B;font-size:13px">Mathématiques • Français • S.V.T • Physique</p>
+  </div></div>
+</div>
+
+<!-- 2. TABLEAU DE BORD -->
+<div id="p-dash" class="hidden">
+  <div class="topbar"><div><b id="bonjour">Bonjour</b><br><small id="classeInfo"></small></div><button onclick="deconnecter()" style="background:white;color:#0F3D6B;border:none;padding:8px 12px;border-radius:20px;font-weight:700;cursor:pointer">Déconnexion</button></div>
+  <div class="container">
+    <h2>Mes Matières</h2>
+    <div class="grid">
+      <div class="matiere" onclick="ouvrirMatiere('Math')"><div style="font-size:26px">📐</div><b>Mathématiques</b><br><small>Algèbre • Analyse • Trigonométrie • Géométrie</small></div>
+      <div class="matiere" onclick="ouvrirMatiere('Français')"><div style="font-size:26px">📖</div><b>Français</b><br><small>Vocabulaire • Grammaire • Conjugaison • Analyse • Orthographe</small></div>
+      <div class="matiere" onclick="ouvrirMatiere('SVT')"><div style="font-size:26px">🌱</div><b>S.V.T</b><br><small>Cours • TP • Exercices</small></div>
+      <div class="matiere" onclick="ouvrirMatiere('Physique')"><div style="font-size:26px">⚡</div><b>Physique</b><br><small>Cours • TP • Exercices</small></div>
+    </div>
+    <h3>Mes TP en cours</h3><div id="tpEnCours"></div>
+  </div>
+</div>
+
+<!-- 3. SOUS-BRANCHES -->
+<div id="p-sous" class="hidden">
+  <div class="topbar"><button onclick="retourDash()" style="background:none;border:none;color:white;font-size:16px;cursor:pointer">← Retour</button><b id="titreMatiere">Math</b><span class="badge" id="badgeClasse">7ème A</span></div>
+  <div class="container"><h2 id="titreMatiere2"></h2><div id="zoneSous" class="grid"></div></div>
+</div>
+
+<!-- 4. DETAIL SOUS-BRANCHE -->
+<div id="p-detail" class="hidden">
+  <div class="topbar"><button onclick="retourSous()" style="background:none;border:none;color:white;font-size:16px;cursor:pointer">← Retour</button><b id="titreSous">Algèbre</b><span></span></div>
+  <div class="container">
+    <div class="card"><h2 id="titreSous2"></h2><p id="descSous" style="color:#475569"></p></div>
+    <div class="card"><h3>📚 COURS</h3><div id="zoneCours"></div></div>
+    <div class="card"><h3>🧪 TRAVAUX PRATIQUES (TP)</h3><div id="zoneTP"></div></div>
+    <div class="card"><h3>✏️ EXERCICES</h3><div id="zoneExo"></div></div>
+  </div>
+</div>
+
+<!-- 5. DETAIL TP -->
+<div id="p-tp" class="hidden">
+  <div class="topbar"><button onclick="retourDetail()" style="background:none;border:none;color:white;font-size:16px;cursor:pointer">← Retour</button><b id="tpTitreBar">TP</b><span></span></div>
+  <div class="container"><div class="card">
+    <span class="badge" id="tpBadge"></span><h2 id="tpTitre"></h2>
+    <p><b>Consigne :</b></p><p id="tpConsigne" style="line-height:1.7"></p>
+    <h3>Exercices à réaliser</h3><div id="tpExercices"></div>
+    <label>Réponse de l'élève</label><textarea id="reponseEleve" rows="5" placeholder="Écris ta réponse ici... Montre ton raisonnement, tes calculs."></textarea>
+    <button class="btn" onclick="envoyerTP()">Envoyer mon TP</button><p id="msgTP" style="text-align:center;font-weight:700"></p>
+  </div></div>
+</div>
+
+<script>
+let classeEleve='7ème A', matiereActuelle='Math', sousActuelle='Algèbre', tpActuel=0;
+
+// ============================================================
+// ✏️ C'EST ICI QUE TU AJOUTES TES COURS - PAR CLASSE
+// ============================================================
+let BASE = {
+"7ème A":{
+ "Math":{
+  "Algèbre":{cours:[{t:"1. Résoudre pour X",c:"2x + 10 = 5x + 1 -> x = 3. On met les x d'un côté, les chiffres de l'autre."}],tp:[{titre:"TP 1 : Jardin Urbain - Algèbre",consigne:"Étudier un jardin de 12m sur 8m. Calculer périmètre et aire.",exos:["1. Calculer le périmètre.","2. Calculer l'aire."]}],exos:["Exercice 1 : 90 / 15 = ?"]},
+  "Analyse":{cours:[],tp:[],exos:[]},
+  "Trigonométrie":{cours:[],tp:[],exos:[]},
+  "Géométrie":{cours:[],tp:[],exos:[]}
+ },
+ "Français":{
+  "Vocabulaire":{cours:[],tp:[],exos:[]},
+  "Grammaire":{cours:[],tp:[],exos:[]},
+  "Conjugaison":{cours:[],tp:[],exos:[]},
+  "Analyse":{cours:[],tp:[],exos:[]},
+  "Orthographe":{cours:[],tp:[],exos:[]}
+ },
+ "SVT":{cours:[],tp:[],exos:[]},
+ "Physique":{cours:[],tp:[],exos:[]}
+},
+"7ème B":{"Math":{"Algèbre":{cours:[],tp:[],exos:[]},"Analyse":{cours:[],tp:[],exos:[]},"Trigonométrie":{cours:[],tp:[],exos:[]},"Géométrie":{cours:[],tp:[],exos:[]}}, "Français":{"Vocabulaire":{cours:[],tp:[],exos:[]},"Grammaire":{cours:[],tp:[],exos:[]},"Conjugaison":{cours:[],tp:[],exos:[]},"Analyse":{cours:[],tp:[],exos:[]},"Orthographe":{cours:[],tp:[],exos:[]}}, "SVT":{cours:[],tp:[],exos:[]}, "Physique":{cours:[],tp:[],exos:[]}},
+"8ème A":{"Math":{"Algèbre":{cours:[{t:"1. Calcul littéral - Réduire une expression",c:"On additionne les termes qui ont la même lettre. Exemple : 1°) 3x + 5x = 8x.  2°) 2a + 3 + 4a = 6a + 3.  3°) 24x+4x=28x. 4°) 24x+4x=28x. On ne mélange pas les x avec les chiffres seuls. "},
+{t:"2. Calcul littéral - Développer et factoriser",c:"Développer : on multiplie le nombre devant la parenthèse par chaque terme dedans. Exemple : 1°) 2(x + 3) = 2x + 6. 2°) 5(x + 3) = 5x + 15. Factoriser : c'est le contraire. Exemple : 1°) 8x + 6 = 2(4x + 3). 2°) 2x + 6 = 2(x + 3)."},
+{t:"3. Identités remarquables",c:"f1. (a + b)² = a² + 2ab + b². Exemple1 : (x + 2)² = x² + 4x + 4. f2.(a - b)² = a² - 2ab + b². f3.(a² - b²) = (a - b)(a + b). Exemple2 : x² - 9 = (x - 3)(x + 3)."},
+{t:"4. Puissances et notation scientifique",c:"a exposant n veut dire on multiplie a par lui-même n fois. Exemple : 2³ = 2 x 2 x 2 = 8. a⁰ = 1. a⁻¹ = 1/a. Notation scientifique : 3500 = 3,5 x 10³."},
+{t:"5. Racines carrées",c:"La racine carrée de a est le nombre qui multiplié par lui-même donne a. Exemple : √9 = 3 car 3 x 3 = 9. √a x √b = √(a x b). Exemple : √4 x √9 = √36 = 6."},
+{t:"6. Équations du 1er degré à une inconnue",c:"On cherche x. On met les x d'un côté et les chiffres de l'autre. Exemple : 2x + 4 = 10. 2x = 10 - 4. 2x = 6. x = 6 / 2 = 3. On vérifie : 2 x 3 + 4 = 10."},
+{t:"7. Inéquations du 1er degré",c:"Comme une équation mais avec <, >, <=, >=. Exemple : 3x - 2 > 7. 3x > 9. x > 3. Attention : si on multiplie ou divise par un nombre négatif, on change le sens. Exemple : -x < 2 devient x > -2."},
+{t:"8. Système de deux équations à deux inconnues",c:"On a 2 équations avec x et y. Exemple : x + y = 10 et x - y = 2. On additionne les 2 : 2x = 12 donc x = 6. On remplace : 6 + y = 10 donc y = 4. Solution : (6 ; 4)."},
+{t:"9. Fractions algébriques",c:"On simplifie en divisant en haut et en bas par le même nombre. Exemple : 2x / 4 = x / 2. Pour additionner, on met au même dénominateur. Exemple : 1/2 + 1/3 = 3/6 + 2/6 = 5/6."},
+{t:"10. Fonctions et proportionnalité",c:"Une fonction donne un résultat pour chaque x. Exemple : f(x) = 2x. Si x = 3, f(3) = 6. Tableau de proportionnalité : on multiplie toujours par le même nombre. Exemple : 1 -> 2, 2 -> 4, 3 -> 6."}],tp:[],exos:[]},"Analyse":{cours:[],tp:[],exos:[]},"Trigonométrie":{cours:[],tp:[],exos:[]},"Géométrie":{cours:[],tp:[],exos:[]}}, "Français":{"Vocabulaire":{cours:[],tp:[],exos:[]},"Grammaire":{cours:[],tp:[],exos:[]},"Conjugaison":{cours:[],tp:[],exos:[]},"Analyse":{cours:[],tp:[],exos:[]},"Orthographe":{cours:[],tp:[],exos:[]}}, "SVT":{cours:[],tp:[],exos:[]}, "Physique":{cours:[],tp:[],exos:[]}},
+"8ème B":{Math:{Algèbre:{cours:[
+{t:"1. Calcul littéral - Réduire une expression",c:"On additionne les termes qui ont la même lettre. Exemple : 1°) 3x + 5x = 8x.  2°) 2a + 3 + 4a = 6a + 3.  3°) 24x+4x=28x. On ne mélange pas les x avec les chiffres seuls. "},
+{t:"2. Calcul littéral - Développer et factoriser",c:"Développer : on multiplie le nombre devant la parenthèse par chaque terme dedans. Exemple : 1°) 2(x + 3) = 2x + 6. 2°) 5(x + 3) = 5x + 15. Factoriser : c'est le contraire. Exemple : 1°) 8x + 6 = 2(4x + 3). 2°) 2x + 6 = 2(x + 3)."},
+{t:"3. Identités remarquables",c:"f1. (a + b)² = a² + 2ab + b². Exemple1 : (x + 2)² = x² + 4x + 4. f2.(a - b)² = a² - 2ab + b². f3.(a² - b²) = (a - b)(a + b). Exemple2 : x² - 9 = (x - 3)(x + 3)."},
+{t:"4. Puissances et notation scientifique",c:"a exposant n veut dire on multiplie a par lui-même n fois. Exemple : 2³ = 2 x 2 x 2 = 8. a⁰ = 1. a⁻¹ = 1/a. Notation scientifique : 3500 = 3,5 x 10³."},
+{t:"5. Racines carrées",c:"La racine carrée de a est le nombre qui multiplié par lui-même donne a. Exemple : √9 = 3 car 3 x 3 = 9. √a x √b = √(a x b). Exemple : √4 x √9 = √36 = 6."},
+{t:"6. Équations du 1er degré à une inconnue",c:"On cherche x. On met les x d'un côté et les chiffres de l'autre. Exemple : 2x + 4 = 10. 2x = 10 - 4. 2x = 6. x = 6 / 2 = 3. On vérifie : 2 x 3 + 4 = 10."},
+{t:"7. Inéquations du 1er degré",c:"Comme une équation mais avec <, >, <=, >=. Exemple : 3x - 2 > 7. 3x > 9. x > 3. Attention : si on multiplie ou divise par un nombre négatif, on change le sens. Exemple : -x < 2 devient x > -2."},
+{t:"8. Système de deux équations à deux inconnues",c:"On a 2 équations avec x et y. Exemple : x + y = 10 et x - y = 2. On additionne les 2 : 2x = 12 donc x = 6. On remplace : 6 + y = 10 donc y = 4. Solution : (6 ; 4)."},
+{t:"9. Fractions algébriques",c:"On simplifie en divisant en haut et en bas par le même nombre. Exemple : 2x / 4 = x / 2. Pour additionner, on met au même dénominateur. Exemple : 1/2 + 1/3 = 3/6 + 2/6 = 5/6."},
+{t:"10. Fonctions et proportionnalité",c:"Une fonction donne un résultat pour chaque x. Exemple : f(x) = 2x. Si x = 3, f(3) = 6. Tableau de proportionnalité : on multiplie toujours par le même nombre. Exemple : 1 -> 2, 2 -> 4, 3 -> 6."}
+],tp:[
+{titre:"TP 1 : Calcul littéral - Réduire une expression",consigne:"Dans le calcul littéral, on ne mélange pas : les x vont avec les x, les chiffres seuls restent seuls. Réduis chaque expression en regroupant les termes qui se ressemblent.",exos:["1. Réduis 5x + 3x = ?","2. Réduis 7a + 2 + 3a = ?","3. Réduis 10y - 4y + 1 = ?"]},
+{titre:"TP 2 : La distributivité - Développer",consigne:"Pour développer, on multiplie le nombre dehors par chaque nombre dedans : a x (b + c) = a x b + a x c. Exemple : 3 x (x + 2) = 3x + 6.",exos:["1. Développe 3 x (x + 2) = ?","2. Développe 2 x (4x + 1) = ?","3. Développe 5 x (2x - 3) = ?"]},
+{titre:"TP 3 : Identités remarquables",consigne:"Apprends les 3 formules par coeur : (a + b) au carré = a au carré + 2ab + b au carré. (a - b) au carré = a au carré - 2ab + b au carré. a au carré - b au carré = (a - b)(a + b).",exos:["1. Développe (x + 3) au carré = ?","2. Développe (x - 2) au carré = ?","3. Factorise x au carré - 16 = ?"]},
+{titre:"TP 4 : Puissances et notation scientifique",consigne:"a puissance n veut dire on multiplie a par lui-même n fois. Exemple : 2 puissance 3 = 2 x 2 x 2 = 8. a puissance 0 = 1. En notation scientifique, on écrit un seul chiffre avant la virgule fois 10 puissance n.",exos:["1. Calcule 3 au carré = ?","2. Calcule 2 puissance 4 = ?","3. Écris 4200 en notation scientifique."]},
+{titre:"TP 5 : Racines carrées",consigne:"La racine carrée de a est le nombre qui multiplié par lui-même donne a. Exemple : racine de 9 = 3 car 3 x 3 = 9. Pour multiplier : racine de a x racine de b = racine de (a x b).",exos:["1. Calcule racine de 16 = ?","2. Calcule racine de 25 = ?","3. Simplifie racine de 4 x racine de 25 = ?"]},
+{titre:"TP 6 : Équations du 1er degré",consigne:"Pour trouver x, on met les x d'un côté et les chiffres de l'autre. Ce qu'on fait d'un côté, on le fait de l'autre. A la fin, on vérifie en remplaçant x par la réponse.",exos:["1. Résous 3x + 5 = 14. x = ?","2. Résous 2x + 6 = 12. x = ?","3. Vérifie ta réponse du 1 en calculant 3x + 5."]},
+{titre:"TP 7 : Inéquations du 1er degré",consigne:"Comme une équation mais avec <, >, plus petit ou égal, plus grand ou égal. Attention : si on multiplie ou on divise par un nombre négatif, on change le sens. Exemple : -x < 2 devient x > -2.",exos:["1. Résous 2x + 1 plus grand ou égal à 9. x = ?","2. Résous x + 4 < 10. x < ?","3. Donne 3 valeurs possibles pour x si x > 3."]},
+{titre:"TP 8 : Système de deux équations",consigne:"On a 2 équations avec x et y. On peut additionner les 2 équations pour faire disparaître une lettre, trouver l'autre, puis remplacer pour trouver la première.",exos:["1. Résous : x + y = 12 et x - y = 4.","2. Résous : x + y = 10 et x - y = 2.","3. Vérifie avec x = 8 et y = 4 dans x + y = 12."]},
+{titre:"TP 9 : Fractions algébriques",consigne:"On simplifie en divisant en haut et en bas par le même nombre. Exemple : 6x / 9 = 2x / 3. Pour additionner des fractions, on met au même dénominateur.",exos:["1. Simplifie 6x / 9 = ?","2. Simplifie 4x / 8 = ?","3. Calcule 1/4 + 2/4 = ?"]},
+{titre:"TP 10 : Fonctions et proportionnalité",consigne:"Une fonction donne un résultat pour chaque x. Exemple : f(x) = 3x. Si x = 2, f(2) = 6. Dans un tableau de proportionnalité, on multiplie toujours par le même nombre.",exos:["1. Pour f(x) = 3x, calcule f(2) = ?","2. Pour f(x) = 3x, calcule f(5) = ?","3. Fais le tableau pour x = 1, 2, 3 avec f(x) = 3x."]}
+],exos:["Exercice 1 : a. Réduis 4x + 2x = ?","Exercice 1 : Réduis 4x + 2x = ?", "Exercice 2 : Réduis 5x + 3x = ?", "Exercice 3 : Réduis 7a + 2 + 3a = ?", "Exercice 4 : Réduis 10y - 4y + 1 = ?" ,"Exercice 2 : Développe a. 3 x (x + 2) = ?","Exercice 1 : Développe 3 x (x + 2) = ?", "Exercice 2 : Développe 2 x (4x + 1) = ?", "Exercice 3 : Développe 5 x (2x - 3) = ?", "Exercice 4 : Développe x x (4x + 1) = ?", "Exercice 2 : Développe b. x (4x + 1) = ?", "Exercice 4 : Calcule (x + 3) au carré = ?", "Exercice 1 : Développe (x + 3) au carré = ?", "Exercice 2 : Développe (x - 2) au carré = ?", "Exercice 3 : Factorise x au carré - 16 = ?", "Exercice 4 : Factorise x au carré - 9 = ?","Exercice 5 : Calcule 2 puissance 3 = ?","Exercice 1 : Calcule 2 puissance 3 = ?", "Exercice 2 : Calcule 3 au carré = ?", "Exercice 3 : Calcule 2 puissance 4 = ?", "Exercice 4 : Écris 4200 en notation scientifique.", "Exercice 6 : Calcule racine de 36 = ?","Exercice 1 : Calcule racine de 16 = ?", "Exercice 2 : Calcule racine de 25 = ?", "Exercice 3 : Calcule racine de 36 = ?", "Exercice 4 : Simplifie racine de 4 x racine de 25 = ?", "Exercice 7 : Résous 2x + 6 = 12. x = ?","Exercice 1 : Résous 2x + 6 = 12. x = ?", "Exercice 2 : Résous 3x + 5 = 14. x = ?", "Exercice 3 : Résous 4x - 2 = 10. x = ?", "Exercice 4 : Vérifie si x = 3 est solution de 2x + 4 = 10.", "Exercice 8 : Résous x + 4 < 10. x < ?", "Exercice 1 : Résous x + 4 < 10. x < ?", "Exercice 2 : Résous 2x + 1 plus grand ou égal à 9. x = ?", "Exercice 3 : Résous 3x - 2 > 7. x > ?", "Exercice 4 : Donne 3 valeurs possibles pour x si x > 3.","Exercice 9 : Si x + y = 9 et x = 5, y = ?", "Exercice 1 : Si x + y = 9 et x = 5, y = ?", "Exercice 2 : Résous : x + y = 12 et x - y = 4.", "Exercice 3 : Résous : x + y = 10 et x - y = 2.", "Exercice 4 : Vérifie x = 8 et y = 4 dans x + y = 12.","Exercice 1 : Simplifie 4x / 8 = ?", "Exercice 2 : Simplifie 6x / 9 = ?", "Exercice 3 : Calcule 1/4 + 2/4 = ?", "Exercice 4 : Calcule 1/2 + 1/3 = ?","Exercice 10 : Simplifie 4x / 8 = ?"]},"Analyse":{cours:[],tp:[],exos:[]},"Trigonométrie":{cours:[],tp:[],exos:[]},"Géométrie":{cours:[],tp:[],exos:[]}}, "Français":{"Vocabulaire":{cours:[],tp:[],exos:[]},"Grammaire":{cours:[],tp:[],exos:[]},"Conjugaison":{cours:[],tp:[],exos:[]},"Analyse":{cours:[],tp:[],exos:[]},"Orthographe":{cours:[],tp:[],exos:[]}}, "SVT":{cours:[],tp:[],exos:[]}, "Physique":{cours:[],tp:[],exos:[]}}
+};
+
+function entrerApp(){ document.getElementById('p-bienvenue').style.display='none'; document.getElementById('p-accueil').classList.remove('hidden'); }
+function commencer(){
+  let n=document.getElementById('nom').value.trim(); classeEleve=document.getElementById('classe').value;
+  if(n.length<2){alert('Veuillez entrer le nom de l\'élève');return;}
+  document.getElementById('bonjour').textContent='Bonjour, '+n; document.getElementById('classeInfo').textContent=classeEleve+' • Mbwangi Kelasi';
+  let html='';
+  // TP en cours
+  let m=Math; // placeholder
+  ['Math','Français'].forEach(mat=>{
+    let sous=BASE[classeEleve][mat];
+    Object.keys(sous).forEach(s=>{
+      sous[s].tp.forEach(t=>{ html+=`<div class="card" style="cursor:pointer" onclick="ouvrirMatiere('${mat}')"><b>${t.titre}</b><br><small>${mat} • ${s} • ${classeEleve}</small></div>`; });
+    });
+  });
+  document.getElementById('tpEnCours').innerHTML = html || '<div class="card">Aucun TP pour le moment.</div>';
+  document.getElementById('p-accueil').classList.add('hidden'); document.getElementById('p-dash').classList.remove('hidden');
+}
+function deconnecter(){ document.getElementById('p-dash').classList.add('hidden'); document.getElementById('p-accueil').classList.remove('hidden'); }
+function ouvrirMatiere(m){
+  matiereActuelle=m;
+  document.getElementById('titreMatiere').textContent=m;
+  document.getElementById('titreMatiere2').textContent=m+' - '+classeEleve;
+  document.getElementById('badgeClasse').textContent=classeEleve;
+  let zone=document.getElementById('zoneSous');
+  if(m==='Math'){
+    zone.innerHTML=['Algèbre','Analyse','Trigonométrie','Géométrie'].map(s=>`<div class="matiere" onclick="ouvrirSous('${s}')"><b>${s}</b><br><small>Cours • TP • Exercices</small></div>`).join('');
+  } else if(m==='Français'){
+    zone.innerHTML=['Vocabulaire','Grammaire','Conjugaison','Analyse','Orthographe'].map(s=>`<div class="matiere" onclick="ouvrirSous('${s}')"><b>${s}</b><br><small>Cours • TP • Exercices</small></div>`).join('');
+  } else {
+    // SVT / Physique - pas de sous-branches, on va direct au détail
+    ouvrirSousDirect(m); return;
+  }
+  document.getElementById('p-dash').classList.add('hidden'); document.getElementById('p-sous').classList.remove('hidden');
+}
+function ouvrirSous(s){
+  sousActuelle=s; let d=BASE[classeEleve][matiereActuelle][s];
+  document.getElementById('titreSous').textContent=s; document.getElementById('titreSous2').textContent=s+' - '+matiereActuelle+' • '+classeEleve;
+  document.getElementById('descSous').textContent=matiereActuelle+' - '+s+' - '+classeEleve;
+  document.getElementById('zoneCours').innerHTML=d.cours.length?d.cours.map(c=>`<div class="cours-box"><b>${c.t}</b><br>${c.c}</div>`).join(''):`<div class="espace">✏️ Espace réservé - Cours de ${s} ${classeEleve}</div>`;
+  document.getElementById('zoneTP').innerHTML=d.tp.length?d.tp.map((t,i)=>`<div class="tp-item"><b>${t.titre}</b><br><small>${t.consigne.substring(0,80)}...</small><br><button class="btn" style="margin-top:8px" onclick="ouvrirTP(${i})">Ouvrir le TP →</button></div>`).join(''):`<div class="espace">✏️ Espace réservé - TP de ${s} ${classeEleve}</div>`;
+  document.getElementById('zoneExo').innerHTML=d.exos.length?d.exos.map(e=>`<div class="tp-item">${e}</div>`).join(''):`<div class="espace">✏️ Espace réservé - Exercices de ${s} ${classeEleve}</div>`;
+  document.getElementById('p-sous').classList.add('hidden'); document.getElementById('p-detail').classList.remove('hidden');
+}
+function ouvrirSousDirect(m){
+  // Pour SVT / Physique
+  let d=BASE[classeEleve][m];
+  document.getElementById('titreSous').textContent=m; document.getElementById('titreSous2').textContent=m+' • '+classeEleve;
+  document.getElementById('descSous').textContent=m+' - '+classeEleve;
+  document.getElementById('zoneCours').innerHTML=d.cours.length?d.cours.map(c=>`<div class="cours-box"><b>${c.t}</b><br>${c.c}</div>`).join(''):`<div class="espace">✏️ Espace réservé - Cours de ${m} ${classeEleve}</div>`;
+  document.getElementById('zoneTP').innerHTML=d.tp.length?d.tp.map((t,i)=>`<div class="tp-item"><b>${t.titre}</b><br><button class="btn" onclick="ouvrirTPDirect(${i})">Ouvrir le TP →</button></div>`).join(''):`<div class="espace">✏️ Espace réservé - TP de ${m} ${classeEleve}</div>`;
+  document.getElementById('zoneExo').innerHTML=d.exos.length?d.exos.map(e=>`<div class="tp-item">${e}</div>`).join(''):`<div class="espace">✏️ Espace réservé - Exercices</div>`;
+  // On mémorise que c'est direct
+  sousActuelle='__direct';
+  document.getElementById('p-dash').classList.add('hidden'); document.getElementById('p-detail').classList.remove('hidden');
+}
+function retourDash(){ ['p-sous','p-detail','p-tp'].forEach(id=>document.getElementById(id).classList.add('hidden')); document.getElementById('p-dash').classList.remove('hidden'); }
+function retourSous(){ document.getElementById('p-detail').classList.add('hidden'); if(sousActuelle==='__direct'){ document.getElementById('p-dash').classList.remove('hidden'); } else { document.getElementById('p-sous').classList.remove('hidden'); } }
+function retourDetail(){ document.getElementById('p-tp').classList.add('hidden'); document.getElementById('p-detail').classList.remove('hidden'); }
+function ouvrirTP(i){
+  tpActuel=i; let t=BASE[classeEleve][matiereActuelle][sousActuelle].tp[i];
+  document.getElementById('tpTitreBar').textContent=t.titre; document.getElementById('tpBadge').textContent=matiereActuelle+' • '+sousActuelle+' • '+classeEleve;
+  document.getElementById('tpTitre').textContent=t.titre; document.getElementById('tpConsigne').textContent=t.consigne;
+  document.getElementById('tpExercices').innerHTML=t.exos.map(e=>`<div class="tp-item">${e}</div>`).join('');
+  document.getElementById('reponseEleve').value=''; document.getElementById('msgTP').textContent='';
+  document.getElementById('p-detail').classList.add('hidden'); document.getElementById('p-tp').classList.remove('hidden');
+}
+function ouvrirTPDirect(i){ tpActuel=i; sousActuelle='__direct'; let t=BASE[classeEleve][matiereActuelle].tp[i]; document.getElementById('tpTitreBar').textContent=t.titre; document.getElementById('tpBadge').textContent=matiereActuelle+' • '+classeEleve; document.getElementById('tpTitre').textContent=t.titre; document.getElementById('tpConsigne').textContent=t.consigne; document.getElementById('tpExercices').innerHTML=t.exos.map(e=>`<div class="tp-item">${e}</div>`).join(''); document.getElementById('p-detail').classList.add('hidden'); document.getElementById('p-tp').classList.remove('hidden'); }
+function envoyerTP(){ let r=document.getElementById('reponseEleve').value.trim(); if(r.length<5){alert('Veuillez écrire votre réponse');return;} document.getElementById('msgTP').textContent='✅ TP envoyé avec succès. Le professeur va le corriger.'; document.getElementById('msgTP').style.color='green'; }
+</script>
+</body>
+</html>
